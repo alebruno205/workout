@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programma Calisthenics — Ciclo 2, Progressione 4 Settimane</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1B1B1D;
+    --surface: #232326;
+    --surface-2: #2B2B2F;
+    --line: #38383D;
+    --ink: #F5F3EE;
+    --ink-muted: #9B9B9C;
+    --w1: #5CA85A;   /* 10kg - verde */
+    --w1-dim: #5CA85A33;
+    --w2: #E7B93B;   /* 15kg - giallo */
+    --w2-dim: #E7B93B33;
+    --w3: #D14B41;   /* 25kg - rosso */
+    --w3-dim: #D14B4133;
+    --w4: #AEB4BA;   /* scarico - grigio "sbarra scarica" */
+    --w4-dim: #AEB4BA33;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .display{ font-family:'Oswald', sans-serif; text-transform:uppercase; letter-spacing:0.02em; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 64px 24px 40px;
+    max-width: 980px;
+    margin: 0 auto;
+    text-align:center;
+  }
+  .hero .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1{
+    font-size: clamp(34px, 6vw, 58px);
+    font-weight: 700;
+    margin: 0 0 12px;
+    line-height: 1.02;
+  }
+  .hero h1 span{ color: var(--w3); }
+  .hero p.sub{
+    color: var(--ink-muted);
+    font-size: 16px;
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.55;
+  }
+
+  /* barbell signature */
+  .barbell{ display:flex; justify-content:center; margin-bottom: 8px; }
+  .barbell svg{ width:100%; max-width: 640px; height:auto; }
+  .plate-link{ cursor:pointer; }
+  .plate-link text{ pointer-events:none; }
+  .barbell-caption{
+    display:flex; justify-content:center; gap:28px; flex-wrap:wrap;
+    margin-top:18px; font-family:'JetBrains Mono', monospace; font-size:12px;
+    color: var(--ink-muted);
+  }
+  .barbell-caption span{ display:flex; align-items:center; gap:7px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  /* ---------- LEGEND ---------- */
+  .legend{
+    max-width: 980px;
+    margin: 0 auto 56px;
+    padding: 0 24px;
+  }
+  .legend-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap:1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .legend-item{
+    background: var(--surface);
+    padding: 18px 18px 16px;
+  }
+  .legend-item .plate-num{
+    font-family:'Oswald', sans-serif;
+    font-size: 22px;
+    font-weight:600;
+  }
+  .legend-item .plate-name{
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    line-height:1.4;
+  }
+
+  /* ---------- WEEK SECTION ---------- */
+  .week{
+    max-width: 980px;
+    margin: 0 auto 6px;
+    padding: 0 24px 64px;
+    scroll-margin-top: 24px;
+  }
+  .week-head{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom: 22px;
+  }
+  .plate-badge{
+    width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald', sans-serif; font-weight:700; font-size:18px;
+    flex:none;
+    border: 2px solid transparent;
+  }
+  .week-head h2{
+    font-size: clamp(22px, 3.4vw, 30px);
+    margin: 0;
+    font-weight:600;
+  }
+  .week-head .week-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  table{
+    width:100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  thead th{
+    text-align:left;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight:500;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td{
+    padding: 13px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.day{
+    font-family:'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    border-right: 1px solid var(--line);
+    width: 72px;
+  }
+  td.exercise{ font-weight:500; }
+  td.recovery{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .day-block-start td{ border-top: 1px solid var(--line); }
+  tbody tr:first-child.day-block-start td{ border-top: none; }
+
+  tbody tr:hover td{ background: var(--surface-2); }
+
+  footer{
+    text-align:center;
+    padding: 20px 24px 60px;
+    color: var(--ink-muted);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px){
+    thead th:nth-child(1), td.day{ width: 56px; font-size:13px; padding: 12px 8px; }
+    table, thead th, tbody td{ font-size: 12.5px; }
+    tbody td{ padding: 11px 10px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="eyebrow">Trazioni Zavorrate · Dip Zavorrati · Handstand Push-up · Gambe</div>
+    <h1>Ciclo 2 — <span>4 settimane</span></h1>
+    <p class="sub">Dopo la Settimana 3 del ciclo 1 (trazioni 10kg, dip 30kg) si riparte da qui. Piegamenti eliminati definitivamente. Martedì e giovedì sono ora fissi per le gambe. Ogni sessione sta in 25 minuti; se un giorno non basta, i 10-15 minuti in più si recuperano la sera (max 2 volte a settimana).</p>
+
+    <div class="barbell">
+      <svg viewBox="0 0 640 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="70" x2="620" y2="70" stroke="#4A4A4F" stroke-width="6"/>
+        <!-- sleeve caps -->
+        <rect x="14" y="58" width="14" height="24" rx="2" fill="#4A4A4F"/>
+        <rect x="612" y="58" width="14" height="24" rx="2" fill="#4A4A4F"/>
+
+        <a href="#w1" class="plate-link">
+          <rect x="90" y="35" width="22" height="70" rx="4" fill="var(--w1)"/>
+          <text x="101" y="122" text-anchor="middle" fill="var(--w1)" font-family="JetBrains Mono, monospace" font-size="11">S1</text>
+        </a>
+        <a href="#w2" class="plate-link">
+          <rect x="220" y="27" width="26" height="86" rx="4" fill="var(--w2)"/>
+          <text x="233" y="122" text-anchor="middle" fill="var(--w2)" font-family="JetBrains Mono, monospace" font-size="11">S2</text>
+        </a>
+        <a href="#w3" class="plate-link">
+          <rect x="370" y="18" width="30" height="104" rx="4" fill="var(--w3)"/>
+          <text x="385" y="135" text-anchor="middle" fill="var(--w3)" font-family="JetBrains Mono, monospace" font-size="11">S3</text>
+        </a>
+        <a href="#w4" class="plate-link">
+          <rect x="520" y="42" width="20" height="56" rx="4" fill="var(--w4)" fill-opacity="0.55"/>
+          <text x="530" y="122" text-anchor="middle" fill="var(--w4)" font-family="JetBrains Mono, monospace" font-size="11">S4</text>
+        </a>
+      </svg>
+    </div>
+    <div class="barbell-caption">
+      <span><i class="dot" style="background:var(--w1)"></i>Settimana 1 — Base</span>
+      <span><i class="dot" style="background:var(--w2)"></i>Settimana 2 — Volume</span>
+      <span><i class="dot" style="background:var(--w3)"></i>Settimana 3 — Picco</span>
+      <span><i class="dot" style="background:var(--w4)"></i>Settimana 4 — Scarico</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-grid">
+      <div class="legend-item" style="border-top:2px solid var(--w1)">
+        <div class="plate-num" style="color:var(--w1)">RIR 2</div>
+        <div class="plate-name">Top set + 3 back-off, stesso carico, reps in calo</div>
+      </div>
+      <div class="legend-item" style="border-top:2px solid var(--w2)">
+        <div class="plate-num" style="color:var(--w2)">RIR 1–2</div>
+        <div class="plate-name">Top set + 4 back-off, stesso carico, +1kg vs S1</div>
+      </div>
+      <div class="legend-item" style="border-top:2px solid var(--w3)">
+        <div class="plate-num" style="color:var(--w3)">RIR 1</div>
+        <div class="plate-name">Top set + 3 back-off, tentativo di nuovo massimale, recuperi -15"</div>
+      </div>
+      <div class="legend-item" style="border-top:2px solid var(--w4)">
+        <div class="plate-num" style="color:var(--w4)">RIR 3–4</div>
+        <div class="plate-name">Top set + 2 back-off, carico ridotto ~25-30%, scarico</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SETTIMANA 1 ===================== -->
+  <section class="week" id="w1">
+    <div class="week-head">
+      <div class="plate-badge" style="background:var(--w1-dim); color:var(--w1); border-color:var(--w1);">01</div>
+      <div>
+        <h2>Settimana 1 — Base</h2>
+        <div class="week-meta">TOP SET RIR 2 · BACK-OFF 3 SERIE, STESSO CARICO · ~25' A SESSIONE</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Giorno</th><th>Esercizio</th><th>Schema</th><th>Recupero</th></tr></thead>
+      <tbody>
+        <tr class="day-block-start"><td class="day" rowspan="2">Lun</td><td class="exercise">Trazioni zavorrate</td><td>10kg — top set RIR 2 + 3 back-off (stesso carico, reps in calo)</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Dip bodyweight</td><td>top set RIR 2 + 3 back-off, target 15-10-10-10</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="4">Mar <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Nordic hamstring curl</td><td>3 x RIR 2</td><td class="recovery">90"-2'</td></tr>
+        <tr><td class="exercise">Hyperextension</td><td>3 x 8-12</td><td class="recovery">75"</td></tr>
+        <tr><td class="exercise">Copenaghen plank</td><td>3 x 20-30" per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Pike push-up rialzati (HSPU skill)</td><td>3 x 10 tecniche — se non entra nei 25', sposta alla sera</td><td class="recovery">75"</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="2">Mer</td><td class="exercise">Dip zavorrati</td><td>30kg — top set RIR 2 + 3 back-off (stesso carico, reps in calo)</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Trazioni bodyweight</td><td>top set RIR 2 + 2 back-off, target 8-5-5</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Gio <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Affondi bulgari</td><td>3 x 6-8 per gamba</td><td class="recovery">75" tra gambe/serie</td></tr>
+        <tr><td class="exercise">Pallof press rotation</td><td>3 x 10-12 per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Core + prehab spalle/polsi</td><td>6-7 min circuito breve</td><td class="recovery">30" tra esercizi</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Ven</td><td class="exercise">Trazioni zavorrate (leggere)</td><td>10kg — top set RIR 2 + 2 back-off</td><td class="recovery">2'30" top set / 90" back-off</td></tr>
+        <tr><td class="exercise">Dip zavorrati (leggeri)</td><td>30kg — top set RIR 2 + 2 back-off</td><td class="recovery">2'30" top set / 90" back-off</td></tr>
+        <tr><td class="exercise">HSPU skill (pike push-up avanzati)</td><td>3-4 serie tecniche — se serve, sposta alla sera (15')</td><td class="recovery">come necessario</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== SETTIMANA 2 ===================== -->
+  <section class="week" id="w2">
+    <div class="week-head">
+      <div class="plate-badge" style="background:var(--w2-dim); color:var(--w2); border-color:var(--w2);">02</div>
+      <div>
+        <h2>Settimana 2 — Volume</h2>
+        <div class="week-meta">TOP SET RIR 1-2 · BACK-OFF 4 SERIE · CARICO +1KG</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Giorno</th><th>Esercizio</th><th>Schema</th><th>Recupero</th></tr></thead>
+      <tbody>
+        <tr class="day-block-start"><td class="day" rowspan="2">Lun</td><td class="exercise">Trazioni zavorrate</td><td>11kg — top set RIR 1-2 + 4 back-off, stesso carico</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Dip bodyweight</td><td>top set RIR 1-2 + 4 back-off, target 18-11-11-11</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="4">Mar <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Nordic hamstring curl</td><td>3 x RIR 2</td><td class="recovery">90"-2'</td></tr>
+        <tr><td class="exercise">Hyperextension</td><td>3 x 8-12</td><td class="recovery">75"</td></tr>
+        <tr><td class="exercise">Copenaghen plank</td><td>3 x 20-30" per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Wall walk + hold verticale (HSPU skill)</td><td>4-5 tentativi/hold 10-20" — se serve, sposta alla sera</td><td class="recovery">90"</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="2">Mer</td><td class="exercise">Dip zavorrati</td><td>32kg — top set RIR 1-2 + 4 back-off, stesso carico</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Trazioni bodyweight</td><td>top set RIR 1-2 + 2 back-off, target 9-6-6</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Gio <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Affondi bulgari</td><td>3 x 6-8 per gamba</td><td class="recovery">75" tra gambe/serie</td></tr>
+        <tr><td class="exercise">Pallof press rotation</td><td>3 x 10-12 per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Core + prehab spalle/polsi</td><td>6-7 min circuito breve</td><td class="recovery">30" tra esercizi</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Ven</td><td class="exercise">Trazioni zavorrate (leggere)</td><td>11kg — top set RIR 1-2 + 2 back-off</td><td class="recovery">2'30" top set / 90" back-off</td></tr>
+        <tr><td class="exercise">Dip zavorrati (leggeri)</td><td>32kg — top set RIR 1-2 + 2 back-off</td><td class="recovery">2'30" top set / 90" back-off</td></tr>
+        <tr><td class="exercise">Wall hold verticale (HSPU skill)</td><td>3-4 hold — se serve, sposta alla sera (15')</td><td class="recovery">90"</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== SETTIMANA 3 ===================== -->
+  <section class="week" id="w3">
+    <div class="week-head">
+      <div class="plate-badge" style="background:var(--w3-dim); color:var(--w3); border-color:var(--w3);">03</div>
+      <div>
+        <h2>Settimana 3 — Picco</h2>
+        <div class="week-meta">TOP SET RIR 1 · TENTATIVO NUOVO MASSIMALE · RECUPERO -15"</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Giorno</th><th>Esercizio</th><th>Schema</th><th>Recupero</th></tr></thead>
+      <tbody>
+        <tr class="day-block-start"><td class="day" rowspan="2">Lun</td><td class="exercise">Trazioni zavorrate</td><td>12kg — top set RIR 1 (punta a un nuovo record) + 3 back-off</td><td class="recovery">2'45" top set / 1'45" back-off</td></tr>
+        <tr><td class="exercise">Dip bodyweight</td><td>top set RIR 1 + 3 back-off, target 22-14-14-14</td><td class="recovery">1'45" top set / 75" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="4">Mar <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Nordic hamstring curl</td><td>3 x RIR 2</td><td class="recovery">90"-2'</td></tr>
+        <tr><td class="exercise">Hyperextension</td><td>3 x 8-12</td><td class="recovery">75"</td></tr>
+        <tr><td class="exercise">Copenaghen plank</td><td>3 x 20-30" per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Negative HSPU al muro (HSPU skill)</td><td>3-5 rip x 3 — se serve, sposta alla sera</td><td class="recovery">90"-2'</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="2">Mer</td><td class="exercise">Dip zavorrati</td><td>34kg — top set RIR 1 (punta a un nuovo record) + 3 back-off</td><td class="recovery">2'45" top set / 1'45" back-off</td></tr>
+        <tr><td class="exercise">Trazioni bodyweight</td><td>top set RIR 1 + 2 back-off, target 11-7-7</td><td class="recovery">1'45" top set / 75" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Gio <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Affondi bulgari</td><td>3 x 6-8 per gamba</td><td class="recovery">75" tra gambe/serie</td></tr>
+        <tr><td class="exercise">Pallof press rotation</td><td>3 x 10-12 per lato</td><td class="recovery">45"-60"</td></tr>
+        <tr><td class="exercise">Core + prehab spalle/polsi</td><td>6-7 min circuito breve</td><td class="recovery">30" tra esercizi</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Ven</td><td class="exercise">Trazioni zavorrate (leggere)</td><td>12kg — top set RIR 1 + 2 back-off</td><td class="recovery">2'15" top set / 75" back-off</td></tr>
+        <tr><td class="exercise">Dip zavorrati (leggeri)</td><td>34kg — top set RIR 1 + 2 back-off</td><td class="recovery">2'15" top set / 75" back-off</td></tr>
+        <tr><td class="exercise">Negative HSPU al muro</td><td>2-3 rip x 2 — se serve, sposta alla sera (15')</td><td class="recovery">90"</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== SETTIMANA 4 ===================== -->
+  <section class="week" id="w4">
+    <div class="week-head">
+      <div class="plate-badge" style="background:var(--w4-dim); color:var(--w4); border-color:var(--w4);">04</div>
+      <div>
+        <h2>Settimana 4 — Scarico</h2>
+        <div class="week-meta">TOP SET RIR 3-4 · CARICO RIDOTTO ~25-30% · RECUPERO RILASSATO</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Giorno</th><th>Esercizio</th><th>Schema</th><th>Recupero</th></tr></thead>
+      <tbody>
+        <tr class="day-block-start"><td class="day" rowspan="2">Lun</td><td class="exercise">Trazioni zavorrate</td><td>8kg — top set RIR 3-4 + 2 back-off</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Dip bodyweight</td><td>top set RIR 3-4 + 2 back-off, target 12-8-8</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="4">Mar <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso)</span></td><td class="exercise">Nordic hamstring curl</td><td>3 x RIR 3-4 (leggero)</td><td class="recovery">90"</td></tr>
+        <tr><td class="exercise">Hyperextension</td><td>2-3 x 8-10</td><td class="recovery">60"</td></tr>
+        <tr><td class="exercise">Copenaghen plank (leggero)</td><td>3 x 15-20" per lato</td><td class="recovery">45"</td></tr>
+        <tr><td class="exercise">Wall hold verticale (mantenimento)</td><td>3-4 hold 10-15"</td><td class="recovery">90"</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="2">Mer</td><td class="exercise">Dip zavorrati</td><td>22kg — top set RIR 3-4 + 2 back-off</td><td class="recovery">3' top set / 2' back-off</td></tr>
+        <tr><td class="exercise">Trazioni bodyweight</td><td>top set RIR 3-4 + 2 back-off, target 6-4-4</td><td class="recovery">2' top set / 90" back-off</td></tr>
+
+        <tr class="day-block-start"><td class="day" rowspan="3">Gio <span class="mono" style="font-size:11px;color:var(--ink-muted)">(fisso, leggero)</span></td><td class="exercise">Affondi bulgari</td><td>2-3 x 6-8 per gamba, corpo libero</td><td class="recovery">60"</td></tr>
+        <tr><td class="exercise">Pallof press rotation (leggero)</td><td>3 x 8-10 per lato</td><td class="recovery">45"</td></tr>
+        <tr><td class="exercise">Core + prehab spalle/polsi (leggero)</td><td>5-6 min circuito</td><td class="recovery">45" tra esercizi</td></tr>
+
+        <tr class="day-block-start"><td class="day">Ven</td><td class="exercise">Facoltativo: attività leggera o riposo completo</td><td>—</td><td class="recovery">—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>PROGRESSIONE 4 SETTIMANE · RIPETI DA S1 CON I NUOVI CARICHI RAGGIUNTI IN S3</footer>
+
+</body>
+</html>
