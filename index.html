@@ -201,7 +201,77 @@
     table, thead th, tbody td{ font-size: 12.5px; }
     tbody td{ padding: 11px 10px; }
   }
+
+  /* ---------- WORKOUT LOG ---------- */
+  .log-panel{
+    max-width:980px;margin:0 auto 56px;padding:0 24px;
+  }
+  .log-card{
+    background:var(--surface);border:1px solid var(--line);padding:22px;
+  }
+  .log-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .log-head h2{margin:0;font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:26px}
+  .log-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-muted);margin-top:5px}
+  .log-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .log-btn{
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+    padding:10px 13px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;
+    border-radius:4px;
+  }
+  .log-btn.primary{border-color:var(--w1);color:var(--w1)}
+  .log-btn.danger{border-color:var(--w3);color:var(--w3)}
+  .log-btn:disabled{opacity:.45;cursor:not-allowed}
+  .log-form{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr;gap:10px;margin-bottom:16px}
+  .log-field label{display:block;color:var(--ink-muted);font-size:10px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+  .log-field select,.log-field input{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    padding:10px;border-radius:3px;font:13px 'Inter',sans-serif;
+  }
+  .sets-editor{display:grid;gap:8px;margin-bottom:12px}
+  .set-row{display:grid;grid-template-columns:50px 1fr 1fr 1fr 40px;gap:8px;align-items:end}
+  .set-number{font-family:'JetBrains Mono',monospace;color:var(--ink-muted);font-size:11px;padding-bottom:11px}
+  .remove-set{height:36px;padding:0 8px}
+  .log-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .history-title{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:20px;margin:20px 0 10px}
+  .history-empty{color:var(--ink-muted);font-size:13px;padding:15px 0}
+  .history-table{overflow-x:auto}
+  .history-table table{min-width:650px}
+  .drive-note{font-size:11px;color:var(--ink-muted);line-height:1.5;margin-top:12px}
+  .connected{color:var(--w1)!important}
+  @media(max-width:700px){
+    .log-form{grid-template-columns:1fr 1fr}
+    .set-row{grid-template-columns:38px 1fr 1fr 40px}
+    .set-row .rir-field{grid-column:2/4}
+    .log-card{padding:16px}
+  }
+
+
+  .session-banner{display:flex;justify-content:space-between;align-items:center;gap:15px;border:1px solid var(--line);background:var(--surface-2);padding:15px;margin:18px 0}
+  .session-title{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:24px}
+  .exercise-card{border:1px solid var(--line);background:var(--bg);margin:12px 0;padding:16px}
+  .exercise-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .exercise-name{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:19px}
+  .exercise-prescription{color:var(--ink-muted);font-size:12px;margin-top:4px;line-height:1.4}
+  .previous-result{border-left:3px solid var(--w2);background:var(--surface);padding:9px 11px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--w2)}
+  .previous-result.none{border-left-color:var(--line);color:var(--ink-muted)}
+  .series-table{width:100%;border-collapse:collapse;margin-top:10px}
+  .series-table th{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:left;color:var(--ink-muted);padding:7px;border-bottom:1px solid var(--line)}
+  .series-table td{padding:6px;border-bottom:1px solid var(--line)}
+  .series-table input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:8px;font-size:13px}
+  .series-number{font-family:'JetBrains Mono',monospace;color:var(--ink-muted);font-size:11px}
+  .exercise-note{margin-top:9px;width:100%;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:8px;font-size:12px}
+  .add-series{margin-top:9px}
+  .remove-exercise{font-size:10px;padding:7px 9px}
+  @media(max-width:700px){
+    .session-banner{align-items:flex-start;flex-direction:column}
+    .series-table{min-width:520px}
+    .exercise-card{overflow-x:auto}
+  }
+
 </style>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
 </head>
 <body>
 
@@ -243,6 +313,78 @@
     </div>
   </div>
 
+
+  <!-- ===================== DIARIO ALLENAMENTI ===================== -->
+  <section class="log-panel" id="diario">
+    <div class="log-card">
+      <div class="log-head">
+        <div>
+          <h2>Allenamento</h2>
+          <div id="driveStatus" class="log-status">I dati vengono salvati localmente. Collega Google Drive per sincronizzarli.</div>
+        </div>
+        <div class="log-actions">
+          <button class="log-btn primary" id="connectDriveBtn" type="button">Collega Google Drive</button>
+          <button class="log-btn" id="syncBtn" type="button" disabled>Sincronizza</button>
+          <button class="log-btn" id="exportBtn" type="button">Esporta backup</button>
+          <label class="log-btn" for="importInput">Importa backup</label>
+          <input id="importInput" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+
+      <div id="sessionSetup">
+        <div class="log-form">
+          <div class="log-field">
+            <label for="sessionDate">Data</label>
+            <input id="sessionDate" type="date">
+          </div>
+          <div class="log-field">
+            <label for="sessionWeek">Settimana</label>
+            <select id="sessionWeek">
+              <option value="1">S1 — Base</option>
+              <option value="2">S2 — Volume</option>
+              <option value="3">S3 — Picco</option>
+              <option value="4">S4 — Scarico</option>
+            </select>
+          </div>
+          <div class="log-field">
+            <label for="sessionDay">Giorno</label>
+            <select id="sessionDay">
+              <option value="Lun">Lunedì</option>
+              <option value="Mar">Martedì</option>
+              <option value="Mer">Mercoledì</option>
+              <option value="Gio">Giovedì</option>
+              <option value="Ven">Venerdì</option>
+            </select>
+          </div>
+        </div>
+        <button class="log-btn primary" id="startWorkoutBtn" type="button">▶ START ALLENAMENTO</button>
+        <div class="drive-note">
+          Premendo START vengono caricati automaticamente gli esercizi previsti per quel giorno e per quella settimana.
+          Per ogni esercizio vedrai il risultato registrato nella settimana precedente, quando disponibile.
+        </div>
+      </div>
+
+      <div id="activeWorkout" hidden>
+        <div class="session-banner">
+          <div>
+            <div id="sessionTitle" class="session-title"></div>
+            <div id="sessionMeta" class="log-status"></div>
+          </div>
+          <button class="log-btn" id="changeSessionBtn" type="button">Cambia sessione</button>
+        </div>
+
+        <div id="exerciseCards"></div>
+
+        <div class="log-form-actions">
+          <button class="log-btn primary" id="finishWorkoutBtn" type="button">✓ SALVA ALLENAMENTO</button>
+          <button class="log-btn" id="addExerciseBtn" type="button">+ Aggiungi esercizio</button>
+        </div>
+      </div>
+
+      <div class="history-title">Storico</div>
+      <div id="history" class="history-empty">Nessun allenamento registrato.</div>
+    </div>
+  </section>
   <div class="legend">
     <div class="legend-grid">
       <div class="legend-item" style="border-top:2px solid var(--w1)">
@@ -399,6 +541,353 @@
   </section>
 
   <footer>PROGRESSIONE 4 SETTIMANE · RIPETI DA S1 CON I NUOVI CARICHI RAGGIUNTI IN S3</footer>
+
+
+<script>
+/*
+  GOOGLE DRIVE SETUP
+  1) Create a Google Cloud project.
+  2) Enable Google Drive API.
+  3) Configure OAuth consent / Google Auth Platform.
+  4) Create a Web application OAuth client.
+  5) Add the URL where this HTML is hosted to "Authorized JavaScript origins".
+  6) Paste the resulting Client ID below.
+*/
+const CLIENT_ID = 'INSERISCI_QUI_IL_TUO_CLIENT_ID.apps.googleusercontent.com';
+
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILE_NAME = 'calisthenics-progress.json';
+const DRIVE_MIME = 'application/json';
+const STORAGE_KEY = 'calisthenicsWorkoutLogV1';
+
+let accessToken = null;
+let tokenClient = null;
+let driveFileId = null;
+
+const workoutPlans = {
+  1: {
+    Lun:[
+      {name:'Trazioni zavorrate', prescription:'10kg — top set RIR 2 + 3 back-off (stesso carico, reps in calo)', sets:4, weight:10},
+      {name:'Dip bodyweight', prescription:'top set RIR 2 + 3 back-off, target 15-10-10-10', sets:4, weight:0}
+    ],
+    Mar:[
+      {name:'Nordic hamstring curl', prescription:'3 x RIR 2', sets:3},
+      {name:'Hyperextension', prescription:'3 x 8-12', sets:3},
+      {name:'Step Up', prescription:'3 x 8-12 per gamba', sets:3},
+      {name:'Copenaghen plank', prescription:'3 x 20-30" per lato', sets:3},
+      {name:'Pike push-up rialzati (HSPU skill)', prescription:'3 x 10 tecniche', sets:3}
+    ],
+    Mer:[
+      {name:'Dip zavorrati', prescription:'30kg — top set RIR 2 + 3 back-off (stesso carico, reps in calo)', sets:4, weight:30},
+      {name:'Trazioni bodyweight', prescription:'top set RIR 2 + 2 back-off, target 8-5-5', sets:3, weight:0}
+    ],
+    Gio:[
+      {name:'Affondi bulgari', prescription:'3 x 6-8 per gamba', sets:3},
+      {name:'Leg curl seduto', prescription:'3 x 8-12', sets:3},
+      {name:'Pallof press rotation', prescription:'3 x 10-12 per lato', sets:3},
+      {name:'Core + prehab spalle/polsi', prescription:'6-7 min circuito breve', sets:1}
+    ],
+    Ven:[
+      {name:'Trazioni zavorrate (leggere)', prescription:'10kg — top set RIR 2 + 2 back-off', sets:3, weight:10},
+      {name:'Dip zavorrati (leggeri)', prescription:'30kg — top set RIR 2 + 2 back-off', sets:3, weight:30},
+      {name:'HSPU skill (pike push-up avanzati)', prescription:'3-4 serie tecniche', sets:4}
+    ]
+  },
+  2: {
+    Lun:[
+      {name:'Trazioni zavorrate', prescription:'11kg — top set RIR 1-2 + 4 back-off, stesso carico', sets:5, weight:11},
+      {name:'Dip bodyweight', prescription:'top set RIR 1-2 + 4 back-off, target 18-11-11-11', sets:5, weight:0}
+    ],
+    Mar:[
+      {name:'Nordic hamstring curl', prescription:'3 x RIR 2', sets:3},
+      {name:'Hyperextension', prescription:'3 x 8-12', sets:3},
+      {name:'Step Up', prescription:'3 x 8-12 per gamba', sets:3},
+      {name:'Copenaghen plank', prescription:'3 x 20-30" per lato', sets:3},
+      {name:'Wall walk + hold verticale (HSPU skill)', prescription:'4-5 tentativi/hold 10-20"', sets:5}
+    ],
+    Mer:[
+      {name:'Dip zavorrati', prescription:'32kg — top set RIR 1-2 + 4 back-off, stesso carico', sets:5, weight:32},
+      {name:'Trazioni bodyweight', prescription:'top set RIR 1-2 + 2 back-off, target 9-6-6', sets:3, weight:0}
+    ],
+    Gio:[
+      {name:'Affondi bulgari', prescription:'3 x 6-8 per gamba', sets:3},
+      {name:'Leg curl seduto', prescription:'3 x 8-12', sets:3},
+      {name:'Pallof press rotation', prescription:'3 x 10-12 per lato', sets:3},
+      {name:'Core + prehab spalle/polsi', prescription:'6-7 min circuito breve', sets:1}
+    ],
+    Ven:[
+      {name:'Trazioni zavorrate (leggere)', prescription:'11kg — top set RIR 1-2 + 2 back-off', sets:3, weight:11},
+      {name:'Dip zavorrati (leggeri)', prescription:'32kg — top set RIR 1-2 + 2 back-off', sets:3, weight:32},
+      {name:'Wall hold verticale (HSPU skill)', prescription:'3-4 hold', sets:4}
+    ]
+  },
+  3: {
+    Lun:[
+      {name:'Trazioni zavorrate', prescription:'12kg — top set RIR 1 + 3 back-off', sets:4, weight:12},
+      {name:'Dip bodyweight', prescription:'top set RIR 1 + 3 back-off, target 22-14-14-14', sets:4, weight:0}
+    ],
+    Mar:[
+      {name:'Nordic hamstring curl', prescription:'3 x RIR 2', sets:3},
+      {name:'Hyperextension', prescription:'3 x 8-12', sets:3},
+      {name:'Step Up', prescription:'3 x 8-12 per gamba', sets:3},
+      {name:'Copenaghen plank', prescription:'3 x 20-30" per lato', sets:3},
+      {name:'Negative HSPU al muro (HSPU skill)', prescription:'3-5 rip x 3', sets:3}
+    ],
+    Mer:[
+      {name:'Dip zavorrati', prescription:'34kg — top set RIR 1 + 3 back-off', sets:4, weight:34},
+      {name:'Trazioni bodyweight', prescription:'top set RIR 1 + 2 back-off, target 11-7-7', sets:3, weight:0}
+    ],
+    Gio:[
+      {name:'Affondi bulgari', prescription:'3 x 6-8 per gamba', sets:3},
+      {name:'Leg curl seduto', prescription:'3 x 8-12', sets:3},
+      {name:'Pallof press rotation', prescription:'3 x 10-12 per lato', sets:3},
+      {name:'Core + prehab spalle/polsi', prescription:'6-7 min circuito breve', sets:1}
+    ],
+    Ven:[
+      {name:'Trazioni zavorrate (leggere)', prescription:'12kg — top set RIR 1 + 2 back-off', sets:3, weight:12},
+      {name:'Dip zavorrati (leggeri)', prescription:'34kg — top set RIR 1 + 2 back-off', sets:3, weight:34},
+      {name:'Negative HSPU al muro', prescription:'2-3 rip x 2', sets:2}
+    ]
+  },
+  4: {
+    Lun:[
+      {name:'Trazioni zavorrate', prescription:'8kg — top set RIR 3-4 + 2 back-off', sets:3, weight:8},
+      {name:'Dip bodyweight', prescription:'top set RIR 3-4 + 2 back-off, target 12-8-8', sets:3, weight:0}
+    ],
+    Mar:[
+      {name:'Nordic hamstring curl', prescription:'3 x RIR 3-4 (leggero)', sets:3},
+      {name:'Hyperextension', prescription:'2-3 x 8-10', sets:3},
+      {name:'Step Up', prescription:'2-3 x 8-10 per gamba, leggero', sets:3},
+      {name:'Copenaghen plank (leggero)', prescription:'3 x 15-20" per lato', sets:3},
+      {name:'Wall hold verticale (mantenimento)', prescription:'3-4 hold 10-15"', sets:4}
+    ],
+    Mer:[
+      {name:'Dip zavorrati', prescription:'22kg — top set RIR 3-4 + 2 back-off', sets:3, weight:22},
+      {name:'Trazioni bodyweight', prescription:'top set RIR 3-4 + 2 back-off, target 6-4-4', sets:3, weight:0}
+    ],
+    Gio:[
+      {name:'Affondi bulgari', prescription:'2-3 x 6-8 per gamba, corpo libero', sets:3, weight:0},
+      {name:'Leg curl seduto', prescription:'2-3 x 8-10, leggero', sets:3},
+      {name:'Pallof press rotation (leggero)', prescription:'3 x 8-10 per lato', sets:3},
+      {name:'Core + prehab spalle/polsi (leggero)', prescription:'5-6 min circuito', sets:1}
+    ],
+    Ven:[
+      {name:'Facoltativo: attività leggera o riposo completo', prescription:'—', sets:0}
+    ]
+  }
+};
+
+function getLogs(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function setLogs(logs){ localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); }
+function todayISO(){
+  const d=new Date(), off=d.getTimezoneOffset();
+  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtDate(s){const p=s.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:s;}
+
+function previousResult(week, day, exercise){
+  const prevWeek=Number(week)-1;
+  if(prevWeek<1) return null;
+  const candidates=getLogs().filter(x=>x.week===prevWeek && x.day===day && x.exercise===exercise);
+  candidates.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  return candidates[0] || null;
+}
+function resultText(log){
+  if(!log) return '';
+  return log.sets.map((s,i)=>{
+    const w=s.weight==null?'—':`${s.weight}kg`;
+    const r=s.reps==null?'—':`${s.reps}r`;
+    const q=s.rir==null?'':` · RIR ${s.rir}`;
+    return `S${i+1} ${w} × ${r}${q}`;
+  }).join(' · ');
+}
+function createExerciseCard(plan, index, previous){
+  const card=document.createElement('div');
+  card.className='exercise-card';
+  card.dataset.exercise=plan.name;
+  let rows='';
+  for(let i=0;i<(plan.sets||0);i++){
+    const suggested=previous?.sets?.[i] || {};
+    const weight=plan.weight ?? suggested.weight ?? '';
+    rows += `<tr>
+      <td class="series-number">S${i+1}</td>
+      <td><input class="session-weight" type="number" step="0.5" inputmode="decimal" value="${esc(weight)}" placeholder="kg"></td>
+      <td><input class="session-reps" type="number" min="0" step="1" inputmode="numeric" value="" placeholder="reps"></td>
+      <td><input class="session-rir" type="number" min="0" max="10" step="1" inputmode="numeric" value="" placeholder="RIR"></td>
+    </tr>`;
+  }
+  card.innerHTML=`
+    <div class="exercise-card-header">
+      <div>
+        <div class="exercise-name">${esc(plan.name)}</div>
+        <div class="exercise-prescription">${esc(plan.prescription)}</div>
+      </div>
+      <button class="log-btn danger remove-exercise" type="button">Rimuovi</button>
+    </div>
+    <div class="previous-result ${previous?'':'none'}">
+      ${previous ? 'SETTIMANA PRECEDENTE · ' + esc(resultText(previous)) : 'SETTIMANA PRECEDENTE · nessun dato registrato'}
+    </div>
+    <table class="series-table">
+      <thead><tr><th>Serie</th><th>Peso kg</th><th>Ripetizioni</th><th>RIR</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <button class="log-btn add-series" type="button">+ Serie</button>
+    <input class="exercise-note" placeholder="Note (facoltative)">
+  `;
+  card.querySelector('.remove-exercise').addEventListener('click',()=>card.remove());
+  card.querySelector('.add-series').addEventListener('click',()=>{
+    const tbody=card.querySelector('tbody');
+    const n=tbody.children.length+1;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="series-number">S${n}</td><td><input class="session-weight" type="number" step="0.5" inputmode="decimal" placeholder="kg"></td><td><input class="session-reps" type="number" min="0" step="1" inputmode="numeric" placeholder="reps"></td><td><input class="session-rir" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="RIR"></td>`;
+    tbody.appendChild(tr);
+  });
+  return card;
+}
+function startWorkout(){
+  const week=Number(document.getElementById('sessionWeek').value);
+  const day=document.getElementById('sessionDay').value;
+  const date=document.getElementById('sessionDate').value || todayISO();
+  document.getElementById('sessionDate').value=date;
+  const plans=workoutPlans[week]?.[day] || [];
+  document.getElementById('sessionTitle').textContent=`${day} · Settimana ${week}`;
+  document.getElementById('sessionMeta').textContent=`${fmtDate(date)} · ${plans.length} esercizi programmati`;
+  const box=document.getElementById('exerciseCards');
+  box.innerHTML='';
+  plans.forEach((plan,i)=>{
+    const prev=previousResult(week,day,plan.name);
+    box.appendChild(createExerciseCard(plan,i,prev));
+  });
+  document.getElementById('sessionSetup').hidden=true;
+  document.getElementById('activeWorkout').hidden=false;
+}
+function finishWorkout(){
+  const date=document.getElementById('sessionDate').value || todayISO();
+  const week=Number(document.getElementById('sessionWeek').value);
+  const day=document.getElementById('sessionDay').value;
+  const cards=[...document.querySelectorAll('.exercise-card')];
+  if(!cards.length){alert('Non ci sono esercizi da salvare.');return;}
+  const logs=getLogs();
+  cards.forEach(card=>{
+    const sets=[...card.querySelectorAll('tbody tr')].map(row=>({
+      weight:row.querySelector('.session-weight').value===''?null:Number(row.querySelector('.session-weight').value),
+      reps:row.querySelector('.session-reps').value===''?null:Number(row.querySelector('.session-reps').value),
+      rir:row.querySelector('.session-rir').value===''?null:Number(row.querySelector('.session-rir').value)
+    }));
+    logs.push({
+      id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
+      date,week,day,exercise:card.dataset.exercise,sets,
+      note:card.querySelector('.exercise-note')?.value || '',
+      createdAt:new Date().toISOString()
+    });
+  });
+  logs.sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt));
+  setLogs(logs); renderHistory();
+  if(accessToken) syncToDrive();
+  document.getElementById('activeWorkout').hidden=true;
+  document.getElementById('sessionSetup').hidden=false;
+  alert('Allenamento salvato.');
+}
+function renderHistory(){
+  const target=document.getElementById('history'),logs=getLogs();
+  if(!logs.length){target.className='history-empty';target.textContent='Nessun allenamento registrato.';return;}
+  target.className='history-table';
+  const rows=logs.map(x=>`<tr><td>${esc(fmtDate(x.date))}</td><td>S${x.week}</td><td>${esc(x.day)}</td><td>${esc(x.exercise)}</td><td>${esc(resultText(x))}</td><td><button class="log-btn danger" type="button" onclick="deleteLog('${esc(x.id)}')">Elimina</button></td></tr>`).join('');
+  target.innerHTML=`<table><thead><tr><th>Data</th><th>Settimana</th><th>Giorno</th><th>Esercizio</th><th>Risultato</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function deleteLog(id){
+  setLogs(getLogs().filter(x=>x.id!==id));renderHistory();if(accessToken)syncToDrive();
+}
+function addCustomExercise(){
+  const name=prompt('Nome esercizio da aggiungere:');
+  if(!name)return;
+  const plan={name, prescription:'Esercizio aggiunto manualmente', sets:3};
+  document.getElementById('exerciseCards').appendChild(createExerciseCard(plan,999,previousResult(Number(document.getElementById('sessionWeek').value),document.getElementById('sessionDay').value,name)));
+}
+
+/* ---------- Google Drive ---------- */
+function setDriveStatus(text,connected=false){const el=document.getElementById('driveStatus');el.textContent=text;el.classList.toggle('connected',connected);}
+function initGoogle(){
+  if(typeof google==='undefined'||!google.accounts?.oauth2){setDriveStatus('Google Identity Services non ancora disponibile');return;}
+  if(CLIENT_ID.startsWith('INSERISCI_')){setDriveStatus('Configura CLIENT_ID per collegare Google Drive');return;}
+  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:DRIVE_SCOPE,callback:(response)=>{
+    if(response.error){setDriveStatus('Autorizzazione Google non riuscita');return;}
+    accessToken=response.access_token;document.getElementById('syncBtn').disabled=false;
+    setDriveStatus('Google Drive collegato · sincronizzazione attiva',true);syncFromDrive();
+  }});
+}
+function connectDrive(){
+  if(CLIENT_ID.startsWith('INSERISCI_')){alert('Inserisci il Client ID Google nella costante CLIENT_ID.');return;}
+  if(!tokenClient)initGoogle();if(tokenClient)tokenClient.requestAccessToken({prompt:accessToken?'':'consent'});
+}
+async function driveFetch(url,options={}){
+  const headers=new Headers(options.headers||{});headers.set('Authorization','Bearer '+accessToken);return fetch(url,{...options,headers});
+}
+async function findDriveFile(){
+  const q=`name='${DRIVE_FILE_NAME}' and trashed=false`;
+  const r=await driveFetch('https://www.googleapis.com/drive/v3/files?'+new URLSearchParams({q,spaces:'drive',fields:'files(id,name,modifiedTime)',pageSize:'10'}));
+  if(!r.ok)throw new Error(await r.text());return (await r.json()).files?.[0]||null;
+}
+async function createDriveFile(){
+  const metadata={name:DRIVE_FILE_NAME,mimeType:DRIVE_MIME},body=JSON.stringify(getLogs());
+  const boundary='-------calisthenicsBoundary'+Date.now();
+  const multipart=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: ${DRIVE_MIME}\r\n\r\n${body}\r\n--${boundary}--`;
+  const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime',{method:'POST',headers:{'Content-Type':`multipart/related; boundary=${boundary}`},body:multipart});
+  if(!r.ok)throw new Error(await r.text());return r.json();
+}
+async function updateDriveFile(id){
+  const r=await driveFetch(`https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(id)}?uploadType=media`,{method:'PATCH',headers:{'Content-Type':DRIVE_MIME},body:JSON.stringify(getLogs())});
+  if(!r.ok)throw new Error(await r.text());return r.json();
+}
+async function syncToDrive(){
+  if(!accessToken)return;
+  try{setDriveStatus('Salvataggio su Google Drive…');let f=await findDriveFile();if(!f)f=await createDriveFile();else await updateDriveFile(f.id);driveFileId=f.id;setDriveStatus('Salvato su Google Drive · '+new Date().toLocaleTimeString(),true);}
+  catch(e){console.error(e);setDriveStatus('Errore Drive · copia locale conservata');}
+}
+async function syncFromDrive(){
+  if(!accessToken)return;
+  try{
+    setDriveStatus('Controllo storico su Google Drive…');const f=await findDriveFile();
+    if(!f){if(getLogs().length)await syncToDrive();else setDriveStatus('Google Drive collegato · archivio vuoto',true);return;}
+    driveFileId=f.id;const r=await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(f.id)}?alt=media`);
+    if(!r.ok)throw new Error(await r.text());const cloud=await r.json();
+    if(Array.isArray(cloud)){setLogs(cloud);renderHistory();}
+    setDriveStatus('Google Drive sincronizzato · '+new Date().toLocaleTimeString(),true);
+  }catch(e){console.error(e);setDriveStatus('Lettura Drive non riuscita · dati locali mantenuti');}
+}
+function exportBackup(){
+  const payload={app:'Calisthenics Workout Log',version:2,exportedAt:new Date().toISOString(),logs:getLogs()};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='calisthenics-backup.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importBackup(file){
+  const reader=new FileReader();reader.onload=()=>{try{
+    const parsed=JSON.parse(reader.result),logs=Array.isArray(parsed)?parsed:parsed.logs;
+    if(!Array.isArray(logs))throw new Error();setLogs(logs);renderHistory();if(accessToken)syncToDrive();alert('Backup importato correttamente.');
+  }catch(e){alert('Impossibile importare il backup: file non valido.');}};reader.readAsText(file);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('sessionDate').value=todayISO();
+  document.getElementById('startWorkoutBtn').addEventListener('click',startWorkout);
+  document.getElementById('finishWorkoutBtn').addEventListener('click',finishWorkout);
+  document.getElementById('changeSessionBtn').addEventListener('click',()=>{
+    document.getElementById('activeWorkout').hidden=true;
+    document.getElementById('sessionSetup').hidden=false;
+  });
+  document.getElementById('addExerciseBtn').addEventListener('click',addCustomExercise);
+  document.getElementById('connectDriveBtn').addEventListener('click',connectDrive);
+  document.getElementById('syncBtn').addEventListener('click',syncToDrive);
+  document.getElementById('exportBtn').addEventListener('click',exportBackup);
+  document.getElementById('importInput').addEventListener('change',e=>{if(e.target.files[0])importBackup(e.target.files[0]);e.target.value='';});
+  renderHistory();
+  let tries=0;const timer=setInterval(()=>{tries++;if(typeof google!=='undefined'&&google.accounts?.oauth2){clearInterval(timer);initGoogle();}else if(tries>50)clearInterval(timer);},200);
+});
+</script>
 
 </body>
 </html>
